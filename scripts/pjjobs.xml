@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<pjjobs>
+  <Server>
+    <Name>localhost</Name>
+    <Port>9009</Port>
+    <MaxConnections>5</MaxConnections>
+  </Server>
+  <Logging>
+    <!-- Logging levels: DEBUG, INFO, WARNING, ERROR and CRITICAL. -->
+    <DefaultLevel>DEBUG</DefaultLevel>
+    <FileLevel>DEBUG</FileLevel>
+    <FileSize>1024</FileSize>
+    <FileRotation>5</FileRotation>
+  </Logging>
+  <Jobs>
+    <Job>
+      <Name>TestBucle</Name>
+      <Class>pjjobs.jobs.test.TestBucle</Class>
+    </Job>
+    <Job>
+      <Name>TestBucleQueue</Name>
+      <Class>pjjobs.jobs.test.TestBucleQueue</Class>
+      <Queued>True</Queued>
+    </Job>
+    <Job>
+      <Name>TestBucleQueue2</Name>
+      <Class>pjjobs.jobs.test.TestBucleQueue2</Class>      
+      <Queued>True</Queued>
+    </Job>
+    <Job>
+      <Name>ReporteX</Name>
+      <Redirect>
+        <Server>192.168.1.10</Server>
+        <Port>9009</Port>
+      </Redirect>
+    </Job>
+  </Jobs>
+</pjjobs>
+

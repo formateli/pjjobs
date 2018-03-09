@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+# This file is part of PJJobs project.
+# The COPYRIGHT file at the top level of this repository
+# contains the full copyright notices and license terms.
+
+import os
+import sys
+import argparse
+
+DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+
+try:
+    from pjjobs import VERSION, COPYRIGHT, LICENSE
+    
+except ImportError:
+    print('Running uninstalled mode...')
+    DIR = os.path.normpath(os.path.join(DIRECTORY, '..', 'pjjobs'))
+    if os.path.isdir(DIR):
+        sys.path.insert(0, os.path.dirname(DIR))
+    from pjjobs import VERSION, COPYRIGHT, LICENSE
+
+
+if __name__ == "__main__":
+    from pjjobs import PJJobsServer
+
+    server = PJJobsServer(os.path.join(DIRECTORY, 'pjjobs.xml'))
+    server.listen()
+
