@@ -1,7 +1,7 @@
 PJJobs
 ========
 
-**PJ Jobs** (Python + Json Jobs) is a configurable a easy to use jobs gateway.
+**PJJobs** (Python + Json Jobs) is a configurable a easy to use jobs gateway.
 
 It works as a daemon waiting for instruction for jobs execution.
 
