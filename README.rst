@@ -2,7 +2,9 @@ PJJobs
 ========
 
 **PJ Jobs** (Python + Json Jobs) is a configurable a easy to use jobs gateway.
+
 It works as a daemon waiting for instruction for jobs execution.
+
 Clients send data for a specific jobs in Json format, The PJJobs server then  determines what to do with this job according to its configuration file. It may call a Class for its execution or may route the job to another PJJobs server.
 
 
