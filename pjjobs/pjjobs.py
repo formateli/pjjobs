@@ -12,10 +12,10 @@ class PJJobsServer(JsonSocket):
     def __init__(self, xml_config):
         self.config = PJJobsConfig(xml_config)
         super(PJJobsServer, self).__init__(
-                address=self.config.server_name,
-                port=self.config.server_port)
+                address=self.config.Server.Name,
+                port=int(self.config.Server.Port))
         self.socket.bind(
-            (self.config.server_name, self.config.server_port))
+            (self.config.Server.Name, int(self.config.Server.Port)))
 
     @staticmethod
     def run_job(conn_socket, job, lock, q_finish):
@@ -52,7 +52,7 @@ class PJJobsServer(JsonSocket):
             return job_class()
 
     def listen(self):
-        self.socket.listen(self.config.server_max_connections)
+        self.socket.listen(int(self.config.Server.MaxConnections))
 
         job_id = 1
         q_finish = Queue()
@@ -113,7 +113,6 @@ class PJJobsServer(JsonSocket):
                 return
 
             job_name = data['job']
-
             if job_name not in self.config.jobs:
                 conn_socket.send_obj(self._get_response_data(
                     2, "Job {0} not defined.".format(job_name)))
@@ -122,7 +121,7 @@ class PJJobsServer(JsonSocket):
             t_def = self.config.jobs[job_name]
             job = JobInfo(
                 job_name, id_, data['data'],
-                t_def.queued, t_def.job_class)
+                bool(t_def.Queued), t_def.Class)
 
         except Exception as e:
             conn_socket.send_obj(self._get_response_data(

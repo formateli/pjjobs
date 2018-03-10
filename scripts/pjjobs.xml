@@ -30,8 +30,8 @@
     <Job>
       <Name>ReporteX</Name>
       <Redirect>
-        <Server>192.168.1.10</Server>
-        <Port>9009</Port>
+        <RServer>192.168.1.10</RServer>
+        <RPort>9009</RPort>
       </Redirect>
     </Job>
   </Jobs>

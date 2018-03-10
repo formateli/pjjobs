@@ -4,7 +4,9 @@
 
 import sys
 import os
+import logging
 from . pjjobs import PJJobsServer, PJJobsClient, PJJob
+from . logger import PJJobsLog
 
 PROJECT_NAME = 'PJJobs'
 AUTHOR = 'Fredy Ramirez'
@@ -13,5 +15,6 @@ LICENSE = 'GNU GENERAL PUBLIC LICENSE V3'
 VERSION = '0.1.0'
 DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
-LOGGER = None #TODO
+#LOGGER = PJJobsLog(get_config_value('logging', 'logger_level', 'DEBUG'))
+LOGGER = None
 

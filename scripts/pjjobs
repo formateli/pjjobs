@@ -21,9 +21,60 @@ except ImportError:
     from pjjobs import VERSION, COPYRIGHT, LICENSE
 
 
-if __name__ == "__main__":
+APPNAME = 'PJJobs service'
+
+def get_info():
+    res = "\n{0} version {1}\nCopyright {2}\nLicensed under {3}".format(
+        APPNAME, VERSION, COPYRIGHT, LICENSE)
+    return res
+
+
+def run_service(args):
+    print "Running..."
+
+#    TODO
+#    if sys.stdout:  # Default: WARNING
+#        LOGGER.add_handler(logging.StreamHandler(sys.stdout), args.v)
+
+#    if not os.path.isfile(args.file):
+#        raise Exception()
+#        LOGGER.critical(
+#            "File '{0}' not found.".format(args.file),
+#           True, 'IOError')
+
     from pjjobs import PJJobsServer
 
     server = PJJobsServer(os.path.join(DIRECTORY, 'pjjobs.xml'))
     server.listen()
+
+
+def run():
+    parser = argparse.ArgumentParser(
+        description=APPNAME,
+        formatter_class=argparse.RawTextHelpFormatter)
+
+    help = "Configuration file. Default: pjjobs.xml."
+    parser.add_argument("-c", metavar="config", help=help)
+
+    help = "Address. Default: localhost."
+    parser.add_argument("-a", metavar="address", help=help)
+
+    help = "Port. Default: 9009."
+    parser.add_argument("-p", metavar="port", help=help)
+
+    parser.add_argument(
+        "-i", "--info", action='version', version=get_info(),
+        help='Show version, copyright and license.')
+
+    help = "Output verbosity. Default: 'WARNING'"
+    parser.add_argument(
+        "-v", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="WARNING", help=help)
+
+    args = parser.parse_args()
+    run_service(args)
+
+
+if __name__ == "__main__":
+    run()
 

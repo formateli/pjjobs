@@ -6,67 +6,66 @@ import os
 from xml.dom import minidom
 from xml.parsers import expat
 
+_SECTIONS=['Server', 'Logging', 'Jobs', 'Job', 'Redirect']
+
+
+class _Section(object):
+    def __init__(self, name):
+        self.name = name
+        self.parent = None
+        self.children = []
+        self.value = None
+
+    def add_section(self, section):
+        self.children.append(section)
+        section.parent = self
+        if section.value:
+            setattr(self, section.name, section.value)
+        else:
+            setattr(self, section.name, section)
+
+    def add_value(self, value):
+        self.value = value
+
 
 class PJJobsConfig(object):
     def __init__(self, xml_config):
-        self.server_name = None
-        self.server_port = None
-        self.server_max_connections = None
+        self._sections = _Section('pjjobs')
         self.jobs = {}
-
         try:
             dom = minidom.parse(xml_config)
             node = dom.getElementsByTagName('pjjobs')
-            self._get_data(node[0])
+            if not node:
+                IOError("Invalid pjjobs configuration file.")
+            self._get_data(self._sections, node[0])
+            self._set_attributes()
+            self._finish()
         except Exception as e:
             raise Exception(e)
 
-    def _get_data(self, node):
+    def _get_data(self, parent_section, node):
         for n in node.childNodes:
             if n.nodeName in ('#text', '#comment'):
-                continue
-            if n.nodeName == 'Server':
-                self._get_server(n)
-            if n.nodeName == 'Jobs':
-                self._get_jobs(n)
+                continue 
 
-    def _get_server(self, node):    
-        for n in node.childNodes:
-            if n.nodeName in ('#text', '#comment'):
-                continue
-            if n.nodeName == 'Name':
-                self.server_name = _get_xml_tag_value(n)
-            if n.nodeName == 'Port':
-                self.server_port = int(_get_xml_tag_value(n))
-            if n.nodeName == 'MaxConnections':
-                self.server_max_connections = int(_get_xml_tag_value(n))
+            section = _Section(n.nodeName)
+            if n.nodeName in _SECTIONS:
+                self._get_data(section, n)
+            else:
+                section.value = _get_xml_tag_value(n)
+            parent_section.add_section(section)
 
-    def _get_jobs(self, node):
-        for n in node.childNodes:
-            if n.nodeName in ('#text', '#comment'):
-                continue
-            if n.nodeName != 'Job':
-                continue
-            job = Job(n)
-            self.jobs[job.name] = job
+    def _set_attributes(self):
+        for section in self._sections.children:
+            setattr(self, section.name, section)
 
-
-class Job(object):
-    def __init__(self, node):
-        self.name = None
-        self.queued = False
-        self.job_class = None
-    
-        for n in node.childNodes:
-            if n.nodeName in ('#text', '#comment'):
-                continue
-            if n.nodeName == 'Name':
-                self.name = _get_xml_tag_value(n)
-            if n.nodeName == 'Queued':
-                q = _get_xml_tag_value(n)
-                self.queued = bool(q)
-            if n.nodeName == 'Class':
-                self.job_class = _get_xml_tag_value(n)
+    def _finish(self):
+        for job in self.Jobs.children:
+            for n in job.children:
+                if n.name == 'Name':
+                    self.jobs[n.value] = job
+                    if not hasattr(job, 'Queue'):
+                        setattr(job, 'Queued', 'False')
 
 
 def _get_xml_tag_value(node):
