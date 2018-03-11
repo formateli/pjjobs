@@ -4,7 +4,6 @@
 
 import json
 import socket
-import struct
 
 
 class JsonSocket(object):
@@ -20,14 +19,17 @@ class JsonSocket(object):
     def send_obj(self, obj):
         msg = json.dumps(obj)
         if self.socket:
-            frmt = "=%ds" % len(msg)
-            packed_msg = struct.pack(frmt, msg)
-            packed_hdr = struct.pack('!I', len(packed_msg))
+            header = str(len(msg))
+            self._send(header)
+            self._send(msg)
 
-            self._send(packed_hdr)
-            self._send(packed_msg)
-			
+    def read_obj(self):
+        size = self._msg_length()
+        data = self._read(size)
+        return json.loads(data)
+
     def _send(self, msg):
+        msg = msg.encode('utf-8')
         sent = 0
         while sent < len(msg):
             sent += self.socket.send(msg[sent:])
@@ -35,23 +37,15 @@ class JsonSocket(object):
     def _read(self, size):
         data = ''
         while len(data) < size:
-            data_tmp = self.socket.recv(size-len(data))
-            data += data_tmp
+            data_tmp = self.socket.recv(size - len(data))
+            data += data_tmp.decode('utf-8')
             if data_tmp == '':
                 raise RuntimeError("socket connection broken")
         return data
 
     def _msg_length(self):
-        d = self._read(4)
-        s = struct.unpack('!I', d)
-        return s[0]
-
-    def read_obj(self):
-        size = self._msg_length()
-        data = self._read(size)
-        frmt = "=%ds" % size
-        msg = struct.unpack(frmt, data)
-        return json.loads(msg[0])
+        d = self._read(2) #TODO should be len(MAX_MESSAGE_SIZE)
+        return int(d)
 
     def close(self):
         self.socket.close()

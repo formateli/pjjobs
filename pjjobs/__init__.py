@@ -11,7 +11,7 @@ from . logger import PJJobsLog
 PROJECT_NAME = 'PJJobs'
 AUTHOR = 'Fredy Ramirez'
 COPYRIGHT = '2018, Fredy Ramirez - http://www.formateli.com'
-LICENSE = 'GNU GENERAL PUBLIC LICENSE V3'
+LICENSE = 'GNU GENERAL PUBLIC LICENSE v3'
 VERSION = '0.1.0'
 DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 

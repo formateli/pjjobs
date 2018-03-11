@@ -7,6 +7,11 @@
 import os
 import sys
 
+try:
+    input = raw_input # Python2-3
+except NameError:
+    pass
+
 DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 try:
@@ -22,7 +27,7 @@ except ImportError:
 
 if __name__ == "__main__":	
 
-    bucle = raw_input('Bucle: ')
+    bucle = input('Bucle: ')
     
     data = {
         'job': 'TestBucle',

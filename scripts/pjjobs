@@ -30,7 +30,7 @@ def get_info():
 
 
 def run_service(args):
-    print "Running..."
+    print ("Running...")
 
 #    TODO
 #    if sys.stdout:  # Default: WARNING
