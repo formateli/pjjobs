@@ -11,8 +11,7 @@ import argparse
 DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 try:
-    from pjjobs import VERSION, COPYRIGHT, LICENSE
-    
+    from pjjobs import VERSION, COPYRIGHT, LICENSE    
 except ImportError:
     print('Running uninstalled mode...')
     DIR = os.path.normpath(os.path.join(DIRECTORY, '..', 'pjjobs'))
@@ -77,4 +76,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-

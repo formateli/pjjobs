@@ -4,6 +4,7 @@
 
 from pjjobs import PJJob
 
+
 class TestBucle(PJJob):
     def __init__(self):
         super(TestBucle, self).__init__()

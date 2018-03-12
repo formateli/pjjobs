@@ -49,7 +49,9 @@ class PJJobsServer(JsonSocket):
             return
 
         if job_class:
-            return job_class()
+            job_object = job_class()
+            job_object.name = module_class
+            return job_object
 
     def listen(self):
         self.socket.listen(int(self.config.Server.MaxConnections))
@@ -62,7 +64,7 @@ class PJJobsServer(JsonSocket):
             (clt_socket, address) = self.socket.accept()
             clientsocket = JsonSocket(use_socket=clt_socket)
 
-            job = self._get_jobs(clientsocket, job_id)
+            job = self._get_job(clientsocket, job_id)
             job_id += 1
 
             if not job:
@@ -99,7 +101,7 @@ class PJJobsServer(JsonSocket):
             }
         }
 
-    def _get_jobs(self, conn_socket, id_):
+    def _get_job(self, conn_socket, id_):
         data = conn_socket.read_obj()
         job = None
         try:
@@ -121,7 +123,8 @@ class PJJobsServer(JsonSocket):
             t_def = self.config.jobs[job_name]
             job = JobInfo(
                 job_name, id_, data['data'],
-                bool(t_def.Queued), t_def.Class)
+                self.config.convert_to_bool(t_def.Queued),
+                t_def.Class)
 
         except Exception as e:
             conn_socket.send_obj(self._get_response_data(
@@ -150,11 +153,11 @@ class PJJobsClient(JsonSocket):
 
 class PJJob(object):
     def __init__(self):
-        pass
+        self.name = None
 
     def _run(self, data):
         raise NotImplementedError(
-            "_run() must be implemente by Job class.")
+            "_run() must be implemente by Job class '{0}'.".format(self.name))
 
     def run(self, data, lock):
         if lock:

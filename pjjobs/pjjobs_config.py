@@ -64,8 +64,23 @@ class PJJobsConfig(object):
             for n in job.children:
                 if n.name == 'Name':
                     self.jobs[n.value] = job
-                    if not hasattr(job, 'Queue'):
+                    if not hasattr(job, 'Queued'):
                         setattr(job, 'Queued', 'False')
+
+    @staticmethod
+    def convert_to_bool(value):
+        if value is None:
+            return False
+        if isinstance(value, bool):
+            return value
+        if str(value).lower() in \
+                ('yes', 'y', 'true',  't', '1', '-1'):
+            return True
+        if str(value).lower() in \
+                ('no',  'n', 'false', 'f',
+                '0', '0.0', '', 'none', '[]', '{}'):
+            return False
+        return False
 
 
 def _get_xml_tag_value(node):

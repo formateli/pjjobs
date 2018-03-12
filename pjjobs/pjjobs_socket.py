@@ -19,9 +19,23 @@ class JsonSocket(object):
     def send_obj(self, obj):
         msg = json.dumps(obj)
         if self.socket:
-            header = str(len(msg))
+            header = self._get_message_length(msg)
             self._send(header)
             self._send(msg)
+
+    def _get_message_length(self, msg):
+        s = str(len(msg))
+        ls = len(s)
+        if ls == 4:
+            return s
+        if ls > 4:
+            raise ValueError("Message max length must be 9999")
+        i = 0
+        pad = ''
+        while i < (4 - ls):
+           pad += ' '
+           i += 1
+        return pad + s 
 
     def read_obj(self):
         size = self._msg_length()
@@ -44,7 +58,7 @@ class JsonSocket(object):
         return data
 
     def _msg_length(self):
-        d = self._read(2) #TODO should be len(MAX_MESSAGE_SIZE)
+        d = self._read(4)
         return int(d)
 
     def close(self):
